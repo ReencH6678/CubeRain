@@ -1,32 +1,47 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private GameObject _prefabe;
+    [SerializeField] private Cube _prefabe;
     [SerializeField] private BoxCollider _boxCollider;
 
     private int _poolCapacity = 100;
     private int _poolMaxSize = 100;
 
-    private ObjectPool<GameObject> _pool;
+    private ObjectPool<Cube> _pool;
+
+    private float _spawnRate = 0.3f;
+    private bool _isOn = true;
 
     private void Awake()
     {
-        _pool = new ObjectPool<GameObject>
+        _pool = new ObjectPool<Cube>
             (
                 createFunc: () => Instantiate(_prefabe, GetSpawnPosition(), Quaternion.identity),
                 actionOnGet: (obj) => ActionOnGet(obj),
-                actionOnRelease: (obj) => obj.SetActive(false),
+                actionOnRelease: (obj) => obj.gameObject.SetActive(false),
                 actionOnDestroy: (obj) => Destroy(obj),
                 collectionCheck: true,
                 defaultCapacity: _poolCapacity,
-                maxSize: _poolMaxSize);    
+                maxSize: _poolMaxSize);
     }
 
     private void Start()
     {
-        InvokeRepeating(nameof(GetCube), 0, 0.3f);
+        StartCoroutine(Spawn());
+    }
+
+    private IEnumerator Spawn()
+    {
+        var waitForSecond = new WaitForSeconds(_spawnRate);
+
+        while (_isOn)
+        {
+            GetCube();
+            yield return waitForSecond;
+        }
     }
 
     private void GetCube()
@@ -34,18 +49,20 @@ public class Spawner : MonoBehaviour
         _pool.Get();
     }
 
-    private void ActionOnGet(GameObject obj) 
+    private void ActionOnGet(Cube obj)
     {
-        obj.GetComponent<Cube>().Collised += ActionOnRelease;
+        obj.Collised += ReleaseCube;
         obj.transform.position = GetSpawnPosition();
-        obj.SetActive(true);
+        obj.gameObject.SetActive(true);
     }
 
-    private void ActionOnRelease(GameObject obj) 
+    private void ReleaseCube(Cube obj)
     {
-        obj.GetComponent<MeshRenderer>().material = _prefabe.GetComponent<MeshRenderer>().sharedMaterial;
+        if (obj.TryGetComponent<MeshRenderer>(out MeshRenderer meshRenderer))
+            meshRenderer.material = _prefabe.GetComponent<MeshRenderer>().sharedMaterial;
+
         _pool.Release(obj);
-        obj.GetComponent<Cube>().Collised -= ActionOnRelease;
+        obj.Collised -= ReleaseCube;
     }
     private Vector3 GetSpawnPosition()
     {
