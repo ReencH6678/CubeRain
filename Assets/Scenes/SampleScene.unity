@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 743191432}
   m_Layer: 0
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -446,7 +446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af24f27d6ad7e254084cf4d5982fb801, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _prefabe: {fileID: 1128986864022946380, guid: ba9e47846ed2d764b97f9af41fdef50a, type: 3}
+  _prefabe: {fileID: 5769414779282153503, guid: ba9e47846ed2d764b97f9af41fdef50a, type: 3}
   _boxCollider: {fileID: 1326449742}
 --- !u!65 &1326449742
 BoxCollider:
@@ -534,7 +534,7 @@ GameObject:
   - component: {fileID: 1597038611}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -667,7 +667,7 @@ GameObject:
   - component: {fileID: 2035711217}
   m_Layer: 0
   m_Name: Cube (1)
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -793,5 +793,5 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 743191435}
   - {fileID: 1597038610}
-  - {fileID: 2035711216}
   - {fileID: 1326449744}
+  - {fileID: 2035711216}

@@ -5,6 +5,10 @@ using UnityEngine.Events;
 [RequireComponent(typeof(MeshRenderer))]
 public class Cube : MonoBehaviour
 {
+    private const string PlatformTag = "Platform";
+
+    [SerializeField] private Color _defoultColor;
+
     private float _maxLifeTime = 5;
     private float _minLifeTime = 2;
 
@@ -21,14 +25,25 @@ public class Cube : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if(collision.gameObject.tag == PlatformTag)
         StartCoroutine(DeteteObject());
+    }
+
+    public void ResetColor()
+    {
+        _meshRenderer.material.color = _defoultColor;
     }
 
     private IEnumerator DeteteObject()
     {
-        float minHue = 0, maxHue = 1;
-        float minSaturation = 0, maxSaturation = 1;
-        float minValue = 0, maxValue = 1;
+        float minHue = 0;
+        float maxHue = 1;
+        float minSaturation = 0;
+        float maxSaturation = 1;
+        float minValue = 0;
+        float maxValue = 1;
+
+        _defoultColor = _meshRenderer.material.color;
 
         if (_haveColorChanged == false)
         {
@@ -39,6 +54,7 @@ public class Cube : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(_minLifeTime, _maxLifeTime));
 
         _haveColorChanged = false;
+
         Collised?.Invoke(this);
     }
 }

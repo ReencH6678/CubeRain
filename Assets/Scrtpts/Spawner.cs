@@ -58,12 +58,12 @@ public class Spawner : MonoBehaviour
 
     private void ReleaseCube(Cube obj)
     {
-        if (obj.TryGetComponent<MeshRenderer>(out MeshRenderer meshRenderer))
-            meshRenderer.material = _prefabe.GetComponent<MeshRenderer>().sharedMaterial;
+        obj.ResetColor();
 
         _pool.Release(obj);
         obj.Collised -= ReleaseCube;
     }
+
     private Vector3 GetSpawnPosition()
     {
         Bounds bounds = _boxCollider.bounds;
