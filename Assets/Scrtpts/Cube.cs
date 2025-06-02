@@ -2,12 +2,13 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshRenderer), typeof(Rigidbody))]
 public class Cube : MonoBehaviour
 {
     private const string PlatformTag = "Platform";
 
     [SerializeField] private Color _defoultColor;
+    [SerializeField] private Transform _defoultTransform;
 
     private float _maxLifeTime = 5;
     private float _minLifeTime = 2;
@@ -15,12 +16,14 @@ public class Cube : MonoBehaviour
     private bool _haveColorChanged = false;
 
     private MeshRenderer _meshRenderer;
+    private Rigidbody _rigidbody;
 
     public event UnityAction<Cube> Collised;
 
     private void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -29,9 +32,11 @@ public class Cube : MonoBehaviour
         StartCoroutine(DeteteObject());
     }
 
-    public void ResetColor()
+    public void ResetObject()
     {
         _meshRenderer.material.color = _defoultColor;
+        _rigidbody.velocity = Vector3.zero; 
+        transform.rotation = _defoultTransform.rotation;
     }
 
     private IEnumerator DeteteObject()
@@ -43,8 +48,6 @@ public class Cube : MonoBehaviour
         float minValue = 0;
         float maxValue = 1;
 
-        _defoultColor = _meshRenderer.material.color;
-
         if (_haveColorChanged == false)
         {
             _meshRenderer.material.color = Random.ColorHSV(minHue, maxHue, minSaturation, maxSaturation, minValue, maxValue);
@@ -54,7 +57,6 @@ public class Cube : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(_minLifeTime, _maxLifeTime));
 
         _haveColorChanged = false;
-
         Collised?.Invoke(this);
     }
 }

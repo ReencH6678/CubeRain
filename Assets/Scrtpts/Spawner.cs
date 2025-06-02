@@ -58,10 +58,9 @@ public class Spawner : MonoBehaviour
 
     private void ReleaseCube(Cube obj)
     {
-        obj.ResetColor();
-
-        _pool.Release(obj);
+        obj.ResetObject();
         obj.Collised -= ReleaseCube;
+        _pool.Release(obj);
     }
 
     private Vector3 GetSpawnPosition()
