@@ -28,14 +28,14 @@ public class Cube : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == PlatformTag)
-        StartCoroutine(DeteteObject());
+        if (collision.gameObject.tag == PlatformTag)
+            StartCoroutine(DeteteObject());
     }
 
     public void ResetObject()
     {
         _meshRenderer.material.color = _defoultColor;
-        _rigidbody.velocity = Vector3.zero; 
+        _rigidbody.velocity = Vector3.zero;
         transform.rotation = _defoultTransform.rotation;
     }
 
