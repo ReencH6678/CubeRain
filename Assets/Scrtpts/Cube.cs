@@ -3,8 +3,10 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(ColorChanger), typeof(Rigidbody))]
-public class Cube : MonoBehaviour
+public class Cube : MonoBehaviour , IPoolable
 {
+    private BombSpawner _bombSpawner;
+
     private float _maxLifeTime = 5;
     private float _minLifeTime = 2;
 
@@ -13,12 +15,13 @@ public class Cube : MonoBehaviour
     private ColorChanger _colorChanger;
     private Rigidbody _rigidbody;
 
-    public event UnityAction<Cube> Collised;
+    public event UnityAction<IPoolable> DeactivationRequested;
 
     private void Awake()
     {
         _colorChanger = GetComponent<ColorChanger>();
         _rigidbody = GetComponent<Rigidbody>();
+        _bombSpawner = FindObjectOfType<BombSpawner>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -46,9 +49,10 @@ public class Cube : MonoBehaviour
         _colorChanger.ChangeColor();
 
         yield return new WaitForSeconds(Random.Range(_minLifeTime, _maxLifeTime));
+        _bombSpawner.Spawn(transform);
 
         _haveCollised = false;
-        Collised?.Invoke(this);
+        DeactivationRequested?.Invoke(this);
     }
 }
 

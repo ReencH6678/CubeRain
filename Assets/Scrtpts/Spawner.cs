@@ -1,25 +1,27 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Pool;
 
-public class Spawner : MonoBehaviour
+public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IPoolable
 {
-    [SerializeField] private Cube _prefabe;
-    [SerializeField] private BoxCollider _boxCollider;
+    [SerializeField] private T _prefabe;
+
+    public ObjectPool<T> _pool;
 
     private int _poolCapacity = 100;
     private int _poolMaxSize = 100;
 
-    private ObjectPool<Cube> _pool;
+    public int CreatedObjectsCount { get; private set; }
+    public int ActivObjectsCount { get; private set; }
+    public int SpawnedObjectsCount { get; private set; }
 
-    private float _spawnRate = 0.3f;
-    private bool _isOn = true;
+    public event UnityAction VelueChanged;
 
     private void Awake()
     {
-        _pool = new ObjectPool<Cube>
+        _pool = new ObjectPool<T>
             (
-                createFunc: () => Instantiate(_prefabe, GetSpawnPosition(), Quaternion.identity),
+                createFunc: () => CreateFunc(),
                 actionOnGet: (obj) => ActionOnGet(obj),
                 actionOnRelease: (obj) => obj.gameObject.SetActive(false),
                 actionOnDestroy: (obj) => Destroy(obj),
@@ -28,45 +30,38 @@ public class Spawner : MonoBehaviour
                 maxSize: _poolMaxSize);
     }
 
-    private void Start()
+    private T CreateFunc()
     {
-        StartCoroutine(Spawn());
+        VelueChanged?.Invoke();
+        ++CreatedObjectsCount;
+
+        return Instantiate(_prefabe, GetSpawnPosition(), Quaternion.identity);
     }
 
-    private IEnumerator Spawn()
+    public void ActionOnGet(T obj)
     {
-        var waitForSecond = new WaitForSeconds(_spawnRate);
+        VelueChanged?.Invoke();
 
-        while (_isOn)
-        {
-            GetCube();
-            yield return waitForSecond;
-        }
-    }
+        ++ActivObjectsCount;
+        ++SpawnedObjectsCount;
 
-    private void GetCube()
-    {
-        _pool.Get();
-    }
-
-    private void ActionOnGet(Cube obj)
-    {
-        obj.Collised += ReleaseCube;
+        obj.DeactivationRequested += Release;
         obj.transform.position = GetSpawnPosition();
         obj.gameObject.SetActive(true);
     }
 
-    private void ReleaseCube(Cube obj)
+    public void Release(IPoolable obj)
     {
+        VelueChanged?.Invoke();
+        --ActivObjectsCount;
+
         obj.ResetObject();
-        obj.Collised -= ReleaseCube;
-        _pool.Release(obj);
+        obj.DeactivationRequested -= Release;
+        _pool.Release((T)obj);
     }
 
-    private Vector3 GetSpawnPosition()
+    protected virtual Vector3 GetSpawnPosition()
     {
-        Bounds bounds = _boxCollider.bounds;
-
-        return new Vector3(Random.Range(bounds.min.x, bounds.max.x), transform.position.y, Random.Range(bounds.min.z, bounds.max.z));
+        return new Vector3(0, 0, 0);
     }
 }
