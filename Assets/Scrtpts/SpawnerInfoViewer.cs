@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class SpawnerInfoViewer<T> : MonoBehaviour where T :MonoBehaviour, IPoolable
 {
+    private const string CreateadObjects = "Created Objects ";
+    private const string ActivObjects = "ActivObjects ";
+    private const string SpawnObjects = "Spawn Objects ";
+
     [SerializeField] private Spawner<T> _spawner;
 
     [SerializeField] private TextMeshProUGUI _activeObjectsCount;
@@ -21,8 +25,8 @@ public class SpawnerInfoViewer<T> : MonoBehaviour where T :MonoBehaviour, IPoola
 
     private void UpdateText()
     {
-        _createdObjectsCount.text = "Created Objects " + _spawner.CreatedObjectsCount.ToString();
-        _activeObjectsCount.text = "ActivObjects " + _spawner.ActivObjectsCount.ToString();
-        _spawnedObjectsCount.text = "Spawn Objects " + _spawner.SpawnedObjectsCount.ToString();
+        _createdObjectsCount.text = CreateadObjects + _spawner.CreatedObjectsCount.ToString();
+        _activeObjectsCount.text = ActivObjects + _spawner.ActivObjectsCount.ToString();
+        _spawnedObjectsCount.text = SpawnObjects + _spawner.SpawnedObjectsCount.ToString();
     }
 }
