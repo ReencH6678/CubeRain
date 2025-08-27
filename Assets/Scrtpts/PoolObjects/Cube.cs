@@ -21,7 +21,6 @@ public class Cube : MonoBehaviour , IPoolable
     {
         _colorChanger = GetComponent<ColorChanger>();
         _rigidbody = GetComponent<Rigidbody>();
-        _bombSpawner = FindObjectOfType<BombSpawner>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -44,12 +43,16 @@ public class Cube : MonoBehaviour , IPoolable
         transform.rotation = Quaternion.identity;
     }
 
+    public Transform GetTransform()
+    {
+        return transform;
+    }
+
     private IEnumerator DeteteObject()
     {
         _colorChanger.ChangeColor();
 
         yield return new WaitForSeconds(Random.Range(_minLifeTime, _maxLifeTime));
-        _bombSpawner.Spawn(transform);
 
         _haveCollised = false;
         DeactivationRequested?.Invoke(this);

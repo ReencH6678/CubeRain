@@ -4,6 +4,7 @@ using UnityEngine;
 public class CubeSpawner : Spawner<Cube>
 {
     [SerializeField] private BoxCollider _boxCollider;
+    [SerializeField] private BombSpawner _bombSpawner;
 
     private float _spawnRate = 0.3f;
     private bool _isOn = true;
@@ -11,6 +12,12 @@ public class CubeSpawner : Spawner<Cube>
     private void Start()
     {
         StartCoroutine(Spawn());
+    }
+
+    public override void Release(IPoolable obj)
+    {
+        _bombSpawner.Spawn(obj.GetTransform());
+        base.Release(obj);
     }
 
     private IEnumerator Spawn()

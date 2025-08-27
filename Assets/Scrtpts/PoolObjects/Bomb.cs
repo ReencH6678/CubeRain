@@ -6,7 +6,6 @@ using UnityEngine.Events;
 [RequireComponent(typeof(ColorChanger))]
 public class Bomb : MonoBehaviour , IPoolable
 {
-
     [SerializeField] private float _explodeRadius;
     [SerializeField] private float _explodeForce;
 
@@ -33,6 +32,11 @@ public class Bomb : MonoBehaviour , IPoolable
     public void ResetObject()
     {
        _colorChanger.ResetColor();
+    }
+
+    public Transform GetTransform()
+    {
+        return transform;
     }
 
     private IEnumerator Explode()

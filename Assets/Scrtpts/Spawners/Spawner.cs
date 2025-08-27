@@ -15,7 +15,9 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IPoolable
     public int ActivObjectsCount { get; private set; }
     public int SpawnedObjectsCount { get; private set; }
 
-    public event UnityAction VelueChanged;
+    public event UnityAction Released;
+    public event UnityAction Actived;
+    public event UnityAction Created;
 
     private void Awake()
     {
@@ -32,7 +34,7 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IPoolable
 
     private T CreateFunc()
     {
-        VelueChanged?.Invoke();
+        Created?.Invoke();
         ++CreatedObjectsCount;
 
         return Instantiate(_prefabe, GetSpawnPosition(), Quaternion.identity);
@@ -40,7 +42,7 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IPoolable
 
     public void ActionOnGet(T obj)
     {
-        VelueChanged?.Invoke();
+        Actived?.Invoke();
 
         ++ActivObjectsCount;
         ++SpawnedObjectsCount;
@@ -50,9 +52,9 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, IPoolable
         obj.gameObject.SetActive(true);
     }
 
-    public void Release(IPoolable obj)
+    public virtual void Release(IPoolable obj)
     {
-        VelueChanged?.Invoke();
+        Released?.Invoke();
         --ActivObjectsCount;
 
         obj.ResetObject();

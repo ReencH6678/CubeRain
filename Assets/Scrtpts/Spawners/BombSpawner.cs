@@ -6,7 +6,7 @@ public class BombSpawner : Spawner<Bomb>
 
     public void Spawn(Transform spawnPoint)
     {
-       _spawnPoint = spawnPoint;
+        _spawnPoint = spawnPoint;  
         _pool.Get();
     }
 
